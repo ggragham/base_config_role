@@ -20,3 +20,34 @@
       become: true
 
   when: ansible_os_family == "Debian"
+
+- name: Update RedHat-based Linux System
+  block:
+    - name: Install python3-libdnf5
+      shell: rpm -q python3-libdnf5 || dnf install -y python3-libdnf5
+      changed_when: false
+      become: true
+      when:
+        - ansible_distribution == "Fedora"
+        - ansible_distribution_major_version | int >= 41
+
+    - name: Install python3-libdnf
+      shell: rpm -q python3-libdnf || dnf install -y python3-libdnf
+      changed_when: false
+      become: true
+      when: ansible_distribution in ["RedHat", "Alma", "AlmaLinux", "Rocky", "RockyLinux"]
+
+    - name: Update RedHat-based system
+      dnf:
+        name: '*'
+        state: latest
+        update_cache: true
+        install_weak_deps: false
+      become: true
+
+    - name: Autoremove unused pkgs
+      dnf:
+        autoremove: true
+      become: true
+
+  when: ansible_os_family == "RedHat"
