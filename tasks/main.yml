@@ -3,3 +3,8 @@
   import_tasks: update.yml
   when: UPDATE_LINUX_SYSTEM_ENABLED
   tags: udpate
+
+- name: Configure WireGuard VPN (client)
+  import_tasks: wireguard.yml
+  when: WIREGUARD_ENABLED
+  tags: wireguard
