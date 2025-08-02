@@ -1,0 +1,5 @@
+---
+- name: Update Linux System
+  import_tasks: update.yml
+  when: UPDATE_LINUX_SYSTEM_ENABLED
+  tags: udpate

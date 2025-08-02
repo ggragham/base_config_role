@@ -1,0 +1,2 @@
+---
+UPDATE_LINUX_SYSTEM_ENABLED: true  # Enable or disable Linux System Update.

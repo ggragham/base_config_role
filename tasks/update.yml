@@ -1,0 +1,22 @@
+---
+- name: Update Debian-based Linux System
+  block:
+    - name: Update Debian-based system
+      apt:
+        name: '*'
+        state: latest
+        update_cache: true
+      become: true
+
+    - name: Autoremove unused pkgs
+      apt:
+        autoremove: true
+        purge: true
+      become: true
+
+    - name: Clean APT cache
+      apt:
+        autoclean: true
+      become: true
+
+  when: ansible_os_family == "Debian"
