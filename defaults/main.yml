@@ -31,6 +31,19 @@ OPENVPN_CONFIG_PATH_SRC: /path/to/config/client0.conf  # Source path for OpenVPN
 # Storage
 STORAGE_ENABLED: true  # Enables or disables external storages mounting.
 
+## If no LUKS-encrypted storages are used, leave this list empty:
+# STORAGE_LUKS_LIST: []
+STORAGE_LUKS_LIST:  # List of LUKS encrypted block devices.
+  - label: crypt_data01  # Label for the LUKS device.
+    keyfile_src: /path/to/keys/data01.key  # Path to the keyfile source.
+    keyfile_dest: /root/data01.key  # Path to store the keyfile on the target machine.
+    mapper: mapper_disk01  # Device mapper name for the LUKS device.
+
+  - label: crypt_data02
+    keyfile_src: /path/to/keys/data02.key
+    keyfile_dest: /root/data02.key
+    mapper: mapper_disk02
+
 ## If no storages with generic FS (like ext4, xfs, fat) are used, leave this list empty:
 # STORAGE_GENERIC_FS_LIST: []
 STORAGE_GENERIC_FS_LIST:  # List of generic filesystem storage configurations.

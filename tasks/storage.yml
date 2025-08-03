@@ -18,6 +18,7 @@
         labels_list: >-
           {{
             (
+              STORAGE_LUKS_LIST       | default([]) | map(attribute='label') +
               STORAGE_GENERIC_FS_LIST | default([]) | map(attribute='label') +
             ) | reject('equalto', '') | unique | list
           }}
@@ -38,6 +39,36 @@
       fail:
         msg: 'Missing devices with labels: {{ missing_labels }}'
       when: missing_labels | length > 0
+
+- name: Decrypt storages
+  block:
+    - name: Ensure cryptsetup is installed on Debian-based systems
+      apt:
+        name: cryptsetup
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Copy keyfile
+      copy:
+        src: '{{ item.keyfile_src }}'
+        dest: '{{ item.keyfile_dest }}'
+        mode: 0400
+      loop: '{{ STORAGE_LUKS_LIST }}'
+      become: true
+
+    - name: Add disk to crypttab
+      lineinfile:
+        path: /etc/crypttab
+        line: '{{ item.mapper }} LABEL={{ item.label }} {{ item.keyfile_dest }} luks'
+        state: present
+      loop: '{{ STORAGE_LUKS_LIST }}'
+      become: true
+
+    - name: Decrypt disks in cryptab
+      command: cryptdisks_start '{{ item.mapper }}'
+      loop: '{{ STORAGE_LUKS_LIST }}'
+      become: true
 
 - name: Mount generic FS storages
   block:
