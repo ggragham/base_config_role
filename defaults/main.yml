@@ -58,3 +58,30 @@ STORAGE_GENERIC_FS_LIST:  # List of generic filesystem storage configurations.
     mount_point: /mnt/data03
     fstype: ext4
     opts: defaults
+
+## If no storages with BTRFS subvols are used, leave this list empty:
+# STORAGE_BTRFS_LIST: []
+STORAGE_BTRFS_LIST:  # List of BTRFS subvolume configurations.
+  - label: data02  # Label for the BTRFS subvolume.
+    owner: root  # Owner of the subvolume.
+    subvol: '@cache'  # Name of the BTRFS subvolume.
+    mount_point: /mnt/subvol2/cache  # Mount point for the subvolume.
+    compression: zstd:1  # Compression method used.
+
+  - label: data02
+    owner: root
+    subvol: '@db'
+    mount_point: /mnt/subvol2/db
+    compression: zstd:1
+
+  - label: data04
+    owner: root
+    subvol: '@media'
+    mount_point: /mnt/subvol4/media
+    compression: zstd:1
+
+  - label: data04
+    owner: root
+    subvol: '@backup'
+    mount_point: /mnt/subvol4/backup
+    compression: zstd:1
