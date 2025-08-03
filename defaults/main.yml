@@ -1,27 +1,25 @@
 ---
-# WireGuard
-WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
-WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
+# Auth
+AUTH_CONFIGURATION_ENABLED: false  # Enable or disable auth configuration.
 
 # PKGs
 PKGS_MANAGE_ENABLED: false  # Enable or disable PKGs managment tasks.
 
+PKGS_DEBIAN_REMOVAL_LIST:  # Packages to remove on Debian.
+  - nano
 PKGS_DEBIAN_INSTALLATION_LIST:  # Packages to install on Debian.
   - bash-completion
   - curl
   # - duf
   - vim
 
-PKGS_DEBIAN_REMOVAL_LIST:  # Packages to remove on Debian.
+PKGS_REDHAT_REMOVAL_LIST:  # Packages to remove on RHEL-based system
   - nano
-
 PKGS_REDHAT_INSTALLATION_LIST:  # Packages to install on RHEL-based system.
   - bash-completion
   - curl
   - vim
 
-PKGS_REDHAT_REMOVAL_LIST:  # Packages to remove on RHEL-based system
-  - nano
-
-# Auth
-AUTH_CONFIGURATION_ENABLED: false  # Enable or disable auth configuration.
+# WireGuard
+WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
+WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
