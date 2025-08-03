@@ -4,6 +4,11 @@
   when: UPDATE_LINUX_SYSTEM_ENABLED
   tags: udpate
 
+- name: Manage PKGs
+  import_tasks: pkgs.yml
+  when: PKGS_MANAGE_ENABLED
+  tags: pkgs
+
 - name: Configure WireGuard VPN (client)
   import_tasks: wireguard.yml
   when: WIREGUARD_ENABLED

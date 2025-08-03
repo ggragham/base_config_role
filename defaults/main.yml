@@ -4,3 +4,15 @@ UPDATE_LINUX_SYSTEM_ENABLED: true  # Enable or disable Linux System Update.
 # WireGuard
 WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
 WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
+
+# PKGs
+PKGS_MANAGE_ENABLED: false  # Enable or disable PKGs managment tasks.
+
+PKGS_DEBIAN_INSTALLATION_LIST:  # Packages to install on Debian.
+  - bash-completion
+  - curl
+  # - duf
+  - vim
+
+PKGS_DEBIAN_REMOVAL_LIST:  # Packages to remove on Debian.
+  - nano

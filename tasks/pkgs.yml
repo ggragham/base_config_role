@@ -1,0 +1,19 @@
+---
+- name: Manage Debian-based PKGs
+  block:
+    - name: Remove unnecessary PKGs
+      apt:
+        name: '{{ PKGS_DEBIAN_REMOVAL_LIST }}'
+        state: absent
+        purge: true
+        autoremove: true
+      become: true
+
+    - name: Install necessary PKGs
+      apt:
+        name: '{{ PKGS_DEBIAN_INSTALLATION_LIST }}'
+        state: latest
+        update_cache: true
+      become: true
+
+  when: ansible_os_family == "Debian"
