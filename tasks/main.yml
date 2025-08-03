@@ -1,4 +1,9 @@
 ---
+- name: Auth configuration
+  import_tasks: auth.yml
+  when: AUTH_CONFIGURATION_ENABLED
+  tags: auth
+
 - name: Manage PKGs
   import_tasks: pkgs.yml
   when: PKGS_MANAGE_ENABLED

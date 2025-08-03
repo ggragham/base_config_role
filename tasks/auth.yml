@@ -1,0 +1,8 @@
+---
+- name: Set passwordless sudo
+  community.general.sudoers:
+    name: users
+    state: present
+    user: '{{ USERNAME }}'
+    commands: ALL
+  become: true

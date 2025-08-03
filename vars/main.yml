@@ -1,4 +1,7 @@
 ---
+# Auth
+USERNAME: '{{ ansible_user }}'  # Username of your user on the target Linux machine.
+
 # WireGuard
 WIREGUARD_CONFIG_NAME: wg0  # Name of the WireGuard configuration file (without extension).
 WIREGUARD_CONFIG_PATH_DEST: /etc/wireguard/{{ WIREGUARD_CONFIG_NAME }}.conf  # Destination path for WireGuard config.
