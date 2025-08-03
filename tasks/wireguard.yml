@@ -29,6 +29,19 @@
         dest: '{{ WIREGUARD_CONFIG_PATH_DEST }}'
         mode: 0400
 
+    - name: Ensure /etc/resolv.conf is a symlink to systemd stub
+      file:
+        path: /etc/resolv.conf
+        src: /run/systemd/resolve/stub-resolv.conf
+        state: link
+        force: true
+
+    - name: Ensure systemd-resolved is enabled
+      service:
+        name: systemd-resolved
+        state: started
+        enabled: true
+
     - name: Start WireGuard
       service:
         name: wg-quick@{{ WIREGUARD_CONFIG_NAME }}
