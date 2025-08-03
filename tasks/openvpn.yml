@@ -1,0 +1,31 @@
+---
+- name: Check openvpn config existence
+  stat:
+    path: '{{ OPENVPN_CONFIG_PATH }}'
+  delegate_to: localhost
+  register: ovpn_config_existence
+
+- name: Install and config OpenVPN
+  block:
+    - name: Install OpenVPN
+      apt:
+        name: openvpn
+        state: latest
+        update_cache: true
+        install_recommends: false
+      when: ansible_os_family == "Debian"
+
+    - name: Apply config
+      copy:
+        src: '{{ OPENVPN_CONFIG_PATH_SRC }}'
+        dest: '{{ OPENVPN_CONFIG_PATH_DEST }}'
+        mode: 0400
+
+    - name: Start OpenVPN
+      service:
+        name: openvpn-client@{{ OPENVPN_CONFIG_NAME }}.service
+        state: started
+        enabled: true
+
+  when: ovpn_config_existence.stat.exists
+  become: true

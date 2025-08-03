@@ -13,3 +13,8 @@
   import_tasks: wireguard.yml
   when: WIREGUARD_ENABLED
   tags: wireguard
+
+- name: Configure OpenVPN (client)
+  import_tasks: openvpn.yml
+  when: OPENVPN_ENABLED
+  tags: openvpn
