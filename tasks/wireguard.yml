@@ -7,13 +7,21 @@
 
 - name: Install and config WireGuard
   block:
-    - name: Install WireGuard tools
+    - name: Install WireGuard tools on Debian-based system
       apt:
         name: wireguard-tools
         state: latest
         update_cache: true
         install_recommends: false
       when: ansible_os_family == "Debian"
+
+    - name: Install WireGuard tools on RHEL-based system
+      dnf:
+        name: wireguard-tools
+        state: latest
+        update_cache: true
+        install_weak_deps: false
+      when: ansible_os_family == "RedHat"
 
     - name: Apply config
       copy:
