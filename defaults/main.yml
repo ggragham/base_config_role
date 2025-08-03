@@ -16,3 +16,11 @@ PKGS_DEBIAN_INSTALLATION_LIST:  # Packages to install on Debian.
 
 PKGS_DEBIAN_REMOVAL_LIST:  # Packages to remove on Debian.
   - nano
+
+PKGS_REDHAT_INSTALLATION_LIST:  # Packages to install on RHEL-based system.
+  - bash-completion
+  - curl
+  - vim
+
+PKGS_REDHAT_REMOVAL_LIST:  # Packages to remove on RHEL-based system
+  - nano

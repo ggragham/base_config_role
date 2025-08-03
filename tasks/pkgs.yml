@@ -17,3 +17,34 @@
       become: true
 
   when: ansible_os_family == "Debian"
+
+- name: Manage RHEL-based PKGs
+  block:
+    - name: Remove unnecessary PKGs
+      dnf:
+        name: '{{ PKGS_REDHAT_REMOVAL_LIST }}'
+        state: absent
+        allowerasing: true
+        autoremove: true
+      become: true
+
+    - name: Install EPEL release on RHEL-based system
+      dnf:
+        name: epel-release
+        state: latest
+        update_cache: true
+        install_weak_deps: false
+      when:
+        - ansible_distribution != "Fedora"
+        - ansible_os_family == "RedHat"
+      become: true
+
+    - name: Install necessary packages
+      dnf:
+        name: '{{ PKGS_REDHAT_INSTALLATION_LIST }}'
+        state: latest
+        update_cache: true
+        install_weak_deps: false
+      become: true
+
+  when: ansible_os_family == "RedHat"
