@@ -17,7 +17,9 @@
 
     - name: Install WireGuard tools on RHEL-based system
       dnf:
-        name: wireguard-tools
+        name:
+          - iptables-nft
+          - wireguard-tools
         state: latest
         update_cache: true
         install_weak_deps: false
