@@ -7,13 +7,21 @@
 
 - name: Install and config OpenVPN
   block:
-    - name: Install OpenVPN
+    - name: Install OpenVPN on Debian-based system
       apt:
         name: openvpn
         state: latest
         update_cache: true
         install_recommends: false
       when: ansible_os_family == "Debian"
+
+    - name: Install OpenVPN on RHEL-based system
+      dnf:
+        name: openvpn
+        state: latest
+        update_cache: true
+        install_weak_deps: false
+      when: ansible_os_family == "RedHat"
 
     - name: Apply config
       copy:
