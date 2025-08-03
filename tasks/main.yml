@@ -18,3 +18,8 @@
   import_tasks: openvpn.yml
   when: OPENVPN_ENABLED
   tags: openvpn
+
+- name: Mount Storages
+  import_tasks: storage.yml
+  when: STORAGE_ENABLED
+  tags: storage

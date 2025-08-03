@@ -1,0 +1,52 @@
+---
+- name: Create dirs for mountpoints
+  block:
+    - name: Make dirs for generic fs mountpoints
+      file:
+        path: '{{ item.mount_point }}'
+        state: directory
+        mode: 0755
+        owner: '{{ item.owner }}'
+      loop: '{{ STORAGE_GENERIC_FS_LIST }}'
+      when: STORAGE_GENERIC_FS_LIST | length > 0
+      become: true
+
+- name: Ensure all labeled devices are present
+  block:
+    - name: Collect all unique labels
+      set_fact:
+        labels_list: >-
+          {{
+            (
+              STORAGE_GENERIC_FS_LIST | default([]) | map(attribute='label') +
+            ) | reject('equalto', '') | unique | list
+          }}
+
+    - name: Verify all labeled devices
+      command: blkid -L {{ item }}
+      register: label_check
+      loop: '{{ labels_list }}'
+      failed_when: false
+      changed_when: false
+      become: true
+
+    - name: Collect missing labels
+      set_fact:
+        missing_labels: "{{ label_check.results | rejectattr('rc', 'equalto', 0) | map(attribute='item') | list }}"
+
+    - name: Fail if any labels are missing
+      fail:
+        msg: 'Missing devices with labels: {{ missing_labels }}'
+      when: missing_labels | length > 0
+
+- name: Mount generic FS storages
+  block:
+    - name: Mount generic FS storages
+      mount:
+        path: '{{ item.mount_point }}'
+        src: LABEL={{ item.label }}
+        fstype: '{{ item.fstype }}'
+        opts: '{{ item.opts }}'
+        state: mounted
+      loop: '{{ STORAGE_GENERIC_FS_LIST }}'
+      become: true

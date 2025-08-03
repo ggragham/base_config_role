@@ -27,3 +27,21 @@ WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard
 # OpenVPN
 OPENVPN_ENABLED: false  # Enable or disable OpenVPN VPN.
 OPENVPN_CONFIG_PATH_SRC: /path/to/config/client0.conf  # Source path for OpenVPN configuration.
+
+# Storage
+STORAGE_ENABLED: true  # Enables or disables external storages mounting.
+
+## If no storages with generic FS (like ext4, xfs, fat) are used, leave this list empty:
+# STORAGE_GENERIC_FS_LIST: []
+STORAGE_GENERIC_FS_LIST:  # List of generic filesystem storage configurations.
+  - label: data01  # Label for the filesystem.
+    owner: root  # Owner of the mounted filesystem.
+    mount_point: /mnt/data01  # Mount point for the filesystem.
+    fstype: ext4  # Filesystem type.
+    opts: defaults  # Mount options.
+
+  - label: data03
+    owner: root
+    mount_point: /mnt/data03
+    fstype: ext4
+    opts: defaults
