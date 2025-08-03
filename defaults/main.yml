@@ -1,6 +1,4 @@
 ---
-UPDATE_LINUX_SYSTEM_ENABLED: true  # Enable or disable Linux System Update.
-
 # WireGuard
 WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
 WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
