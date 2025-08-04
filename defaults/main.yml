@@ -85,3 +85,14 @@ STORAGE_BTRFS_LIST:  # List of BTRFS subvolume configurations.
     subvol: '@backup'
     mount_point: /mnt/subvol4/backup
     compression: zstd:1
+
+# SFTP
+SFTP_ENABLED: false  # Enbale or disale SFTP sharing.
+
+SFTP_SHARES_LIST:  # List of SFTP user or group configurations.
+  - type: user  # Type of match (user/group).
+    name: user1  # Name of the user or group.
+    chroot: /mnt/sftp_chroot  # Chroot directory for the SFTP share.
+    subdir: share  # User's working directory inside chroot.
+    mode: 755  # Permissions mode for the chroot directory.
+    password_auth_enabled: true  # Enable or disable password authentication.

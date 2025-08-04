@@ -1,0 +1,113 @@
+---
+- name: Filter all users and groups
+  set_fact:
+    sftp_groups: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'group') | list }}"
+    sftp_users: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'user') | list }}"
+
+- name: Ensure users and groups exist
+  block:
+    - name: Check if group exists
+      getent:
+        database: group
+        key: '{{ item.name }}'
+      loop: '{{ sftp_groups }}'
+      register: group_check_results
+      ignore_errors: true
+
+    - name: Build list of missing groups
+      set_fact:
+        missing_groups: '{{ (missing_groups | default([])) + [item.item.name] }}'
+      when: item.failed
+      loop: '{{ group_check_results.results }}'
+
+    - name: Check if user exists
+      getent:
+        database: passwd
+        key: '{{ item.name }}'
+      loop: '{{ sftp_users }}'
+      register: user_check_results
+      ignore_errors: true
+
+    - name: Build list of missing users
+      set_fact:
+        missing_users: '{{ (missing_users | default([])) + [item.item.name] }}'
+      when: item.failed
+      loop: '{{ user_check_results.results }}'
+
+    - name: Print missing groups
+      debug:
+        msg: 'Missing groups: {{ missing_groups }}'
+      when: (missing_groups | default([])) | length > 0
+
+    - name: Create missing groups
+      group:
+        name: '{{ item }}'
+        state: present
+      loop: '{{ (missing_groups | default([])) }}'
+      become: true
+
+    - name: Print missing users
+      debug:
+        msg: 'Missing users: {{ missing_users }}'
+      when: (missing_users | default([])) | length > 0
+
+    - name: Create missing users
+      user:
+        name: '{{ item }}'
+        state: present
+        shell: /sbin/nologin
+        create_home: true
+      loop: '{{ missing_users | default([]) }}'
+      become: true
+
+- name: Ensure upload directories exist
+  block:
+    - name: Create chroot directories for groups
+      file:
+        path: '{{ item.chroot }}'
+        state: directory
+        recurse: true
+        mode: 0755
+        owner: root
+        group: root
+      loop: '{{ sftp_groups }}'
+      become: true
+
+    - name: Create subdirectories for groups
+      file:
+        path: '{{ item.chroot }}/{{ item.subdir }}'
+        state: directory
+        recurse: true
+        mode: '{{ item.mode }}'
+        group: '{{ item.name }}'
+      loop: '{{ sftp_groups }}'
+      become: true
+
+    - name: Create chroot directories for users
+      file:
+        path: '{{ item.chroot }}'
+        state: directory
+        recurse: true
+        mode: 0755
+        owner: root
+        group: root
+      loop: '{{ sftp_users }}'
+      become: true
+
+    - name: Create subdirectories directories for users
+      file:
+        path: '{{ item.chroot }}/{{ item.subdir }}'
+        state: directory
+        recurse: true
+        mode: '{{ item.mode }}'
+        owner: '{{ item.name }}'
+      loop: '{{ sftp_users }}'
+      become: true
+
+- name: Apply sftp config
+  template:
+    src: 05_sftp.conf.j2
+    dest: /etc/ssh/sshd_config.d/05_sftp.conf
+    mode: 0600
+  notify: Restart sshd
+  become: true

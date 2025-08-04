@@ -1,0 +1,9 @@
+{% for sftp_entity in SFTP_SHARES_LIST %}
+Match {{ sftp_entity.type | title }} {{ sftp_entity.name }}
+    ChrootDirectory {{ sftp_entity.chroot }}
+    PasswordAuthentication {{ 'yes' if sftp_entity.password_auth_enabled else 'no' }}
+    AllowTCPForwarding no
+    X11Forwarding no
+    ForceCommand internal-sftp
+
+{% endfor %}

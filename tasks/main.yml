@@ -23,3 +23,8 @@
   import_tasks: storage.yml
   when: STORAGE_ENABLED
   tags: storage
+
+- name: Configure SFTP
+  import_tasks: sftp.yml
+  when: SFTP_ENABLED
+  tags: sftp
