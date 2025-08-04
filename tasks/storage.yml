@@ -40,9 +40,18 @@
       loop: '{{ STORAGE_LUKS_LIST }}'
       become: true
 
-    - name: Decrypt disks in cryptab
-      command: cryptdisks_start '{{ item.mapper }}'
+    - name: Check if LUKS mapper exists
+      stat:
+        path: /dev/mapper/{{ item.mapper }}
+      register: mapper_stat
       loop: '{{ STORAGE_LUKS_LIST }}'
+      become: true
+
+    - name: Decrypt LUKS volume if not already opened
+      command: >
+        cryptsetup luksOpen /dev/disk/by-label/{{ item.item.label }} {{ item.item.mapper }} --key-file {{ item.item.keyfile_dest }}
+      loop: '{{ mapper_stat.results }}'
+      when: not item.stat.exists
       become: true
 
   when: STORAGE_LUKS_LIST | length > 0
