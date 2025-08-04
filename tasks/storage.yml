@@ -36,6 +36,16 @@
         name: cryptsetup
         state: present
         update_cache: true
+      when: ansible_os_family == "Debian"
+      become: true
+
+    - name: Ensure cryptsetup is installed on RHEL-based systems
+      dnf:
+        name: cryptsetup
+        state: present
+        update_cache: true
+        install_weak_deps: false
+      when: ansible_os_family == "RedHat"
       become: true
 
     - name: Copy keyfile
