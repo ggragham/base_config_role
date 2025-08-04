@@ -81,6 +81,8 @@
       loop: '{{ STORAGE_LUKS_LIST }}'
       become: true
 
+  when: STORAGE_LUKS_LIST | length > 0
+
 - name: Mount generic FS storages
   block:
     - name: Mount generic FS storages
@@ -92,6 +94,8 @@
         state: mounted
       loop: '{{ STORAGE_GENERIC_FS_LIST }}'
       become: true
+
+  when: STORAGE_GENERIC_FS_LIST | length > 0
 
 - name: Mount BTRFS storages
   block:
@@ -113,3 +117,5 @@
       loop_control:
         loop_var: item
       become: true
+
+  when: STORAGE_BTRFS_LIST | length > 0
