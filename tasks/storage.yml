@@ -1,36 +1,12 @@
 ---
-- name: Ensure all labeled devices are present
-  block:
-    - name: Collect all unique labels
-      set_fact:
-        labels_list: >-
-          {{
-            (
-              STORAGE_LUKS_LIST       | default([]) | map(attribute='label') +
-              STORAGE_GENERIC_FS_LIST | default([]) | map(attribute='label') +
-              STORAGE_BTRFS_LIST      | default([]) | map(attribute='label')
-            ) | reject('equalto', '') | unique | list
-          }}
-
-    - name: Verify all labeled devices
-      command: blkid -L {{ item }}
-      register: label_check
-      loop: '{{ labels_list }}'
-      failed_when: false
-      changed_when: false
-      become: true
-
-    - name: Collect missing labels
-      set_fact:
-        missing_labels: "{{ label_check.results | rejectattr('rc', 'equalto', 0) | map(attribute='item') | list }}"
-
-    - name: Fail if any labels are missing
-      fail:
-        msg: 'Missing devices with labels: {{ missing_labels }}'
-      when: missing_labels | length > 0
-
 - name: Decrypt storages
   block:
+    - name: Check LUKS devices
+      include_tasks: _storage_check_labels.yml
+      vars:
+        label_type: LUKS
+        input_list: '{{ STORAGE_LUKS_LIST }}'
+
     - name: Ensure cryptsetup is installed on Debian-based systems
       apt:
         name: cryptsetup
@@ -73,6 +49,12 @@
 
 - name: Mount generic FS storages
   block:
+    - name: Check generic FS devices
+      include_tasks: _storage_check_labels.yml
+      vars:
+        label_type: generic FS
+        input_list: '{{ STORAGE_GENERIC_FS_LIST }}'
+
     - name: Make dirs for generic fs mountpoints
       file:
         path: '{{ item.mount_point }}'
@@ -97,6 +79,12 @@
 
 - name: Mount BTRFS storages
   block:
+    - name: Check Btrfs devices
+      include_tasks: _storage_check_labels.yml
+      vars:
+        label_type: Btrfs
+        input_list: '{{ STORAGE_BTRFS_LIST }}'
+
     - name: Ensure btrfs-progs is installed on Debian-based systems
       apt:
         name: btrfs-progs
