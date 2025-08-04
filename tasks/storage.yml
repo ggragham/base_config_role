@@ -1,16 +1,6 @@
 ---
 - name: Create dirs for mountpoints
   block:
-    - name: Make dirs for generic fs mountpoints
-      file:
-        path: '{{ item.mount_point }}'
-        state: directory
-        mode: 0755
-        owner: '{{ item.owner }}'
-      loop: '{{ STORAGE_GENERIC_FS_LIST }}'
-      when: STORAGE_GENERIC_FS_LIST | length > 0
-      become: true
-
     - name: Make dirs for btrfs mountpoints
       file:
         path: '{{ item.mount_point }}'
@@ -85,6 +75,16 @@
 
 - name: Mount generic FS storages
   block:
+    - name: Make dirs for generic fs mountpoints
+      file:
+        path: '{{ item.mount_point }}'
+        state: directory
+        mode: 0755
+        owner: '{{ item.owner }}'
+      loop: '{{ STORAGE_GENERIC_FS_LIST }}'
+      when: STORAGE_GENERIC_FS_LIST | length > 0
+      become: true
+
     - name: Mount generic FS storages
       mount:
         path: '{{ item.mount_point }}'
