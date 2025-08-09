@@ -1,79 +1,51 @@
 ---
-- name: Filter all users and groups
-  set_fact:
-    sftp_groups: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'group') | list }}"
-    sftp_users: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'user') | list }}"
-
-- name: Ensure users and groups exist
+- name: Create groups and users
   block:
-    - name: Check if group exists
-      getent:
-        database: group
-        key: '{{ item.name }}'
-      loop: '{{ sftp_groups }}'
-      register: group_check_results
-      ignore_errors: true
-
-    - name: Build list of missing groups
-      set_fact:
-        missing_groups: '{{ (missing_groups | default([])) + [item.item.name] }}'
-      when: item.failed
-      loop: '{{ group_check_results.results }}'
-
-    - name: Check if user exists
-      getent:
-        database: passwd
-        key: '{{ item.name }}'
-      loop: '{{ sftp_users }}'
-      register: user_check_results
-      ignore_errors: true
-
-    - name: Build list of missing users
-      set_fact:
-        missing_users: '{{ (missing_users | default([])) + [item.item.name] }}'
-      when: item.failed
-      loop: '{{ user_check_results.results }}'
-
-    - name: Print missing groups
-      debug:
-        msg: 'Missing groups: {{ missing_groups }}'
-      when: (missing_groups | default([])) | length > 0
-
-    - name: Create missing groups
+    - name: Create SFTP groups
       group:
-        name: '{{ item }}'
+        name: '{{ item.name }}'
         state: present
-      loop: '{{ (missing_groups | default([])) }}'
+      loop: '{{ SFTP_GROUPS | default(omit) }}'
       become: true
 
-    - name: Print missing users
-      debug:
-        msg: 'Missing users: {{ missing_users }}'
-      when: (missing_users | default([])) | length > 0
-
-    - name: Create missing users
+    - name: Create SFTP users
       user:
-        name: '{{ item }}'
+        name: '{{ item.name }}'
+        password: '{{ user_password_hashed | default(omit) }}'
+        append: true
+        shell: /usr/sbin/nologin
+        groups: '{{ item.group | default(omit) }}'
+        create_home: false
         state: present
-        shell: /sbin/nologin
-        create_home: true
-      loop: '{{ missing_users | default([]) }}'
+      vars:
+        user_password_hashed: "{{ item.password | password_hash('sha512') }}"
+      loop: '{{ SFTP_USERS }}'
+      no_log: true
       become: true
 
-- name: Ensure upload directories exist
+- name: Create directories
   block:
-    - name: Create chroot directories for groups
+    - name: Get unique chroot directories
+      set_fact:
+        unique_chroots: "{{ SFTP_SHARES_LIST | map(attribute='chroot') | list | unique }}"
+
+    - name: Create SFTP chroot directories
       file:
-        path: '{{ item.chroot }}'
+        path: '{{ item }}'
         state: directory
         recurse: true
         mode: 0755
         owner: root
         group: root
-      loop: '{{ sftp_groups }}'
+      loop: '{{ unique_chroots }}'
       become: true
 
-    - name: Create subdirectories for groups
+    - name: Filter all users and groups
+      set_fact:
+        sftp_groups: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'group') | list }}"
+        sftp_users: "{{ SFTP_SHARES_LIST | selectattr('type', 'equalto', 'user') | list }}"
+
+    - name: Create SFTP subdirectories for groups
       file:
         path: '{{ item.chroot }}/{{ item.subdir }}'
         state: directory
@@ -83,18 +55,7 @@
       loop: '{{ sftp_groups }}'
       become: true
 
-    - name: Create chroot directories for users
-      file:
-        path: '{{ item.chroot }}'
-        state: directory
-        recurse: true
-        mode: 0755
-        owner: root
-        group: root
-      loop: '{{ sftp_users }}'
-      become: true
-
-    - name: Create subdirectories directories for users
+    - name: Create SFTP subdirectories for users
       file:
         path: '{{ item.chroot }}/{{ item.subdir }}'
         state: directory
@@ -104,10 +65,12 @@
       loop: '{{ sftp_users }}'
       become: true
 
-- name: Apply sftp config
+- name: Apply SFTP config
   template:
     src: 05_sftp.conf.j2
     dest: /etc/ssh/sshd_config.d/05_sftp.conf
-    mode: 0600
+    owner: root
+    group: root
+    mode: '0600'
   notify: Restart sshd
   become: true

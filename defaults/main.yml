@@ -89,10 +89,35 @@ STORAGE_BTRFS_LIST:  # List of BTRFS subvolume configurations.
 # SFTP
 SFTP_ENABLED: false  # Enbale or disale SFTP sharing.
 
+SFTP_GROUPS:  # List of SFTP groups.
+  - name: sftpgroup  # Name of the SFTP group.
+
+SFTP_USERS:  # List of SFTP users.
+  - name: sftpuser  # Name of the SFTP user.
+    password: foobar123  # Password for the user (plain text; will be hashed).
+    group: sftpgroup  # Group to which the user belongs.
+
+  - name: sftpuser2
+    password: foobar321
+
 SFTP_SHARES_LIST:  # List of SFTP user or group configurations.
   - type: user  # Type of match (user/group).
-    name: user1  # Name of the user or group.
+    name: sftpuser  # Name of the user or group.
     chroot: /mnt/sftp_chroot  # Chroot directory for the SFTP share.
     subdir: share  # User's working directory inside chroot.
-    mode: 755  # Permissions mode for the chroot directory.
+    mode: '0750'  # Permissions mode for the chroot directory.
     password_auth_enabled: true  # Enable or disable password authentication.
+
+  - type: user
+    name: sftpuser2
+    chroot: /mnt/sftp_chroot
+    subdir: data
+    mode: '0750'
+    password_auth_enabled: true
+
+  - type: group
+    name: sftpgroup
+    chroot: /mnt/sftp_share
+    subdir: media
+    mode: '0570'
+    password_auth_enabled: false
