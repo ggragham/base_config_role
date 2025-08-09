@@ -1,0 +1,54 @@
+---
+- name: Install Samba on Debian-based system
+  apt:
+    name: samba
+    state: present
+    update_cache: true
+  when: ansible_os_family == 'Debian'
+  become: true
+
+- name: Create Samba groups
+  group:
+    name: '{{ item.name }}'
+    state: present
+  loop: '{{ SAMBA_GROUPS | default([]) }}'
+  become: true
+
+- name: Create Samba users
+  user:
+    name: '{{ item.name }}'
+    groups: '{{ item.groups | default([]) }}'
+    append: true
+    shell: /usr/sbin/nologin
+    state: present
+  loop: '{{ SAMBA_USERS | default([]) }}'
+  no_log: true
+  become: true
+
+- name: Set Samba passwords for users
+  shell: (echo "{{ item.password }}"; echo "{{ item.password }}") | smbpasswd -s -a {{ item.name }}
+  loop: '{{ SAMBA_USERS }}'
+  when: item.password is defined
+  register: smbpasswd_results
+  no_log: true
+  become: true
+
+- name: Create Samba shared directories
+  file:
+    path: '{{ item.path }}'
+    state: directory
+    mode: '{{ item.directory_mask | default(omit) }}'
+    owner: '{{ item.force_user | default(omit) }}'
+    group: '{{ item.force_group | default(omit) }}'
+  loop: '{{ SAMBA_SHARES_LIST }}'
+  become: true
+
+- name: Apply Samba config
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Restart smbd
+  become: true

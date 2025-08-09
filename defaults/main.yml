@@ -121,3 +121,38 @@ SFTP_SHARES_LIST:  # List of SFTP user or group configurations.
     subdir: media
     mode: '0570'
     password_auth_enabled: false
+
+# SAMBA
+SAMBA_ENABLED: false  # Enable or disable SAMBA sharing.
+SAMBA_WORKGROUP: WORKGROUP  # Workgroup name for the SAMBA server.
+SAMBA_SERVER_STRING: SAMBA Share  # Description string for the SAMBA server.
+
+SAMBA_GROUPS:  # List of SAMBA groups.
+  - name: smbgroup  # Name of the SAMBA group.
+
+SAMBA_USERS:  # List of SAMBA users.
+  - name: smbuser  # Name of the SAMBA user.
+    password: foobar123  # Password for the user.
+    groups: smbgroup  # Groups to which the user belongs.
+
+  - name: user2
+    password: foobar321
+
+SAMBA_SHARES_LIST:  # List of SAMBA shares.
+  - name: data  # Name of the SAMBA share.
+    path: /mnt/smb_data  # Path to the shared directory.
+    allow_guests: false  # Allow guest access.
+    browseable: false  # Make the share browseable.
+    writable: false  # Allow writing to the share.
+    valid_users: smbuser @smbgroup  # Valid users for the share.
+    force_user: smbuser  # Force file creation as this user.
+    force_group: smbgroup  # Force file creation as this group.
+    create_mask: '0660'  # Permissions mask for newly created files.
+    directory_mask: '0770'  # Permissions mask for new directories.
+
+  - name: share
+    path: /mnt/smb_share
+    allow_guests: true
+    browseable: true
+    writable: true
+    force_user: nobody

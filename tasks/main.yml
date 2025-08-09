@@ -28,3 +28,8 @@
   import_tasks: sftp.yml
   when: SFTP_ENABLED
   tags: sftp
+
+- name: Configure Samba
+  import_tasks: samba.yml
+  when: SAMBA_ENABLED
+  tags: samba

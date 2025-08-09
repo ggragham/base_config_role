@@ -4,3 +4,9 @@
     name: sshd
     state: restarted
   become: true
+
+- name: Restart smbd
+  service:
+    name: smbd
+    state: restarted
+  become: true

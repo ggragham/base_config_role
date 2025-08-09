@@ -1,0 +1,38 @@
+[global]
+workgroup = {{ SAMBA_WORKGROUP }}
+server string = {{ SAMBA_SERVER_STRING }}
+security = user
+server min protocol = SMB3
+smb encrypt = required
+encrypt passwords = true
+
+hosts allow = 127.0.0.1 192.168.0.0/16, 10.0.0.0/8, 172.31.0.0/16
+hosts deny = ALL
+
+log file = /var/log/samba/%m.log
+log level = 1
+max log size = 1000
+
+{% for smb_entity in SAMBA_SHARES_LIST %}
+[{{ smb_entity.name }}]
+path = {{ smb_entity.path }}
+guest ok = {{ 'yes' if smb_entity.allow_guests else 'no' }}
+browseable = {{ 'yes' if smb_entity.browseable else 'no' }}
+writable = {{ 'yes' if smb_entity.writable else 'no' }}
+{% if smb_entity.valid_users is defined and smb_entity.valid_users|string %}
+valid users = {{ smb_entity.valid_users }}
+{% endif %}
+{% if smb_entity.force_user is defined and smb_entity.force_user|string %}
+force user = {{ smb_entity.force_user }}
+{% endif %}
+{% if smb_entity.force_group is defined and smb_entity.force_group|string %}
+force group = {{ smb_entity.force_group }}
+{% endif %}
+{% if smb_entity.create_mask is defined %}
+create mask = {{ smb_entity.create_mask }}
+{% endif %}
+{% if smb_entity.directory_mask is defined %}
+directory mask = {{ smb_entity.directory_mask }}
+{% endif %}
+
+{% endfor %}
