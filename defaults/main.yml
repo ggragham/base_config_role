@@ -1,9 +1,13 @@
 ---
-# Auth
+#################################
+###  Auth Configuration Vars  ###
+#################################
 AUTH_CONFIGURATION_ENABLED: false  # Enable or disable auth configuration.
 
-# PKGs
-PKGS_MANAGE_ENABLED: false  # Enable or disable PKGs managment tasks.
+#################################
+###  Package Management Vars  ###
+#################################
+PKGS_MANAGE_ENABLED: false  # Enable or disable PKGs management tasks.
 
 PKGS_DEBIAN_REMOVAL_LIST:  # Packages to remove on Debian.
   - nano
@@ -20,15 +24,21 @@ PKGS_REDHAT_INSTALLATION_LIST:  # Packages to install on RHEL-based system.
   - curl
   - vim
 
-# WireGuard
+###############################
+###  WireGuard Config Vars  ###
+###############################
 WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
 WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
 
-# OpenVPN
+#############################
+###  OpenVPN Config Vars  ###
+#############################
 OPENVPN_ENABLED: false  # Enable or disable OpenVPN VPN.
 OPENVPN_CONFIG_PATH_SRC: /path/to/config/client0.conf  # Source path for OpenVPN configuration.
 
-# Storage
+#############################
+###  Storage Config Vars  ###
+#############################
 STORAGE_ENABLED: false  # Enables or disables external storages mounting.
 
 ## If no LUKS-encrypted storages are used, leave this list empty:
@@ -86,8 +96,10 @@ STORAGE_BTRFS_LIST:  # List of BTRFS subvolume configurations.
     mount_point: /mnt/subvol4/backup
     compression: zstd:1
 
-# SFTP
-SFTP_ENABLED: false  # Enbale or disale SFTP sharing.
+##########################
+###  SFTP Config Vars  ###
+##########################
+SFTP_ENABLED: false  # Enable or Disable SFTP sharing.
 
 SFTP_GROUPS:  # List of SFTP groups.
   - name: sftpgroup  # Name of the SFTP group.
@@ -122,7 +134,9 @@ SFTP_SHARES_LIST:  # List of SFTP user or group configurations.
     mode: '0570'
     password_auth_enabled: false
 
-# SAMBA
+#################################
+###  SAMBA Config Vars (WIP)  ###
+#################################
 SAMBA_ENABLED: false  # Enable or disable SAMBA sharing.
 SAMBA_WORKGROUP: WORKGROUP  # Workgroup name for the SAMBA server.
 SAMBA_SERVER_STRING: SAMBA Share  # Description string for the SAMBA server.
