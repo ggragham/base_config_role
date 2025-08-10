@@ -11,17 +11,17 @@
   group:
     name: '{{ item.name }}'
     state: present
-  loop: '{{ SAMBA_GROUPS | default([]) }}'
+  loop: '{{ SAMBA_GROUPS }}'
   become: true
 
 - name: Create Samba users
   user:
     name: '{{ item.name }}'
-    groups: '{{ item.groups | default([]) }}'
+    groups: '{{ item.groups | default(omit) }}'
     append: true
     shell: /usr/sbin/nologin
     state: present
-  loop: '{{ SAMBA_USERS | default([]) }}'
+  loop: '{{ SAMBA_USERS }}'
   no_log: true
   become: true
 
