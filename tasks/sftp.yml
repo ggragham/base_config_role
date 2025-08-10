@@ -5,7 +5,7 @@
       group:
         name: '{{ item.name }}'
         state: present
-      loop: '{{ SFTP_GROUPS | default(omit) }}'
+      loop: '{{ SFTP_GROUPS }}'
       become: true
 
     - name: Create SFTP users
