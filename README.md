@@ -119,9 +119,13 @@ STORAGE_BTRFS_LIST:  # List of BTRFS subvolume configurations.
 ##########################
 SFTP_ENABLED: false  # Enable or Disable SFTP sharing.
 
+## If no SFTP groups are used, leave this list empty:
+# SFTP_GROUPS: []
 SFTP_GROUPS:  # List of SFTP groups.
   - name: sftpgroup  # Name of the SFTP group.
 
+## If no SFTP users are used, leave this list empty:
+# SFTP_USERS: []
 SFTP_USERS:  # List of SFTP users.
   - name: sftpuser  # Name of the SFTP user.
     password: foobar123  # Password for the user (plain text; will be hashed).
@@ -159,9 +163,13 @@ SAMBA_ENABLED: false  # Enable or disable SAMBA sharing.
 SAMBA_WORKGROUP: WORKGROUP  # Workgroup name for the SAMBA server.
 SAMBA_SERVER_STRING: SAMBA Share  # Description string for the SAMBA server.
 
+## If no SAMBA groups are used, leave this list empty:
+# SAMBA_GROUPS: []
 SAMBA_GROUPS:  # List of SAMBA groups.
   - name: smbgroup  # Name of the SAMBA group.
 
+## If no SAMBA users are used, leave this list empty:
+# SAMBA_USERS: []
 SAMBA_USERS:  # List of SAMBA users.
   - name: smbuser  # Name of the SAMBA user.
     password: foobar123  # Password for the user.
