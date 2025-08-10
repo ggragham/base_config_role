@@ -9,3 +9,6 @@ WIREGUARD_CONFIG_PATH_DEST: /etc/wireguard/{{ WIREGUARD_CONFIG_NAME }}.conf  # D
 # OpenVPN
 OPENVPN_CONFIG_NAME: client0  # Name of the OpenVPN configuration file (without extension).
 OPENVPN_CONFIG_PATH_DEST: /etc/openvpn/client/{{ OPENVPN_CONFIG_NAME }}.conf  # Destination path for OpenVPN config.
+
+# Samba
+SAMBA_SERVICE_NAME: "{{ 'smbd' if ansible_os_family == 'Debian' else 'smb' }}"

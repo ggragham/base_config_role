@@ -7,6 +7,15 @@
   when: ansible_os_family == 'Debian'
   become: true
 
+- name: Install Samba on RHEL-based system
+  dnf:
+    name: samba
+    state: latest
+    update_cache: true
+    install_weak_deps: false
+  when: ansible_os_family == "RedHat"
+  become: true
+
 - name: Create Samba groups
   group:
     name: '{{ item.name }}'
