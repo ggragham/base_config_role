@@ -28,7 +28,8 @@ PKGS_REDHAT_INSTALLATION_LIST:  # Packages to install on RHEL-based system.
 ###  WireGuard Config Vars  ###
 ###############################
 WIREGUARD_ENABLED: false  # Enable or disable WireGuard VPN.
-WIREGUARD_CONFIG_PATH_SRC: /path/to/config/wg0.conf  # Source path for WireGuard configuration.
+WIREGUARD_CONFIG_NAME: wg0  # Name of the WireGuard configuration.
+WIREGUARD_CONFIG_PATH_SRC: /path/to/config/{{ WIREGUARD_CONFIG_NAME }}.conf  # Source path for WireGuard configuration.
 
 #############################
 ###  OpenVPN Config Vars  ###
