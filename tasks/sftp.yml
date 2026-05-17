@@ -5,23 +5,25 @@
       group:
         name: '{{ item.name }}'
         state: present
-      loop: '{{ SFTP_GROUPS }}'
+      loop: '{{ SFTP_GROUPS | default([], true) }}'
       become: true
+      when:
+        - item.name is defined
 
     - name: Create SFTP users
       user:
         name: '{{ item.name }}'
-        password: '{{ user_password_hashed | default(omit) }}'
+        password: "{{ (item.password | password_hash('sha512')) if item.password is defined else omit }}"
         append: true
         shell: /usr/sbin/nologin
         groups: '{{ item.group | default(omit) }}'
         create_home: false
         state: present
-      vars:
-        user_password_hashed: "{{ item.password | password_hash('sha512') }}"
-      loop: '{{ SFTP_USERS }}'
+      loop: '{{ SFTP_USERS | default([], true) }}'
       no_log: true
       become: true
+      when:
+        - item.name is defined
 
 - name: Create directories
   block:

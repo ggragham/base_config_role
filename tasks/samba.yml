@@ -22,6 +22,7 @@
     state: present
   loop: '{{ SAMBA_GROUPS }}'
   become: true
+  when: SAMBA_GROUPS | default([]) | length > 0
 
 - name: Create Samba users
   user:
@@ -30,17 +31,21 @@
     append: true
     shell: /usr/sbin/nologin
     state: present
-  loop: '{{ SAMBA_USERS }}'
+  loop: '{{ SAMBA_USERS | default([]) }}'
   no_log: true
   become: true
+  when:
+    - item.name is defined
 
 - name: Set Samba passwords for users
   shell: (echo "{{ item.password }}"; echo "{{ item.password }}") | smbpasswd -s -a {{ item.name }}
-  loop: '{{ SAMBA_USERS }}'
-  when: item.password is defined
+  loop: '{{ SAMBA_USERS | default([]) }}'
   register: smbpasswd_results
   no_log: true
   become: true
+  when:
+    - item.name is defined
+    - item.password is defined
 
 - name: Create Samba shared directories
   file:

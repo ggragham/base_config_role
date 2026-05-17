@@ -1,35 +1,35 @@
 ---
 - name: Auth configuration
   import_tasks: auth.yml
-  when: AUTH_CONFIGURATION_ENABLED
+  when: AUTH_CONFIGURATION_ENABLED | default(false) | bool
   tags: auth
 
 - name: Manage PKGs
   import_tasks: pkgs.yml
-  when: PKGS_MANAGE_ENABLED
+  when: PKGS_MANAGE_ENABLED | default(false) | bool
   tags: pkgs
 
 - name: Configure WireGuard VPN (client)
   import_tasks: wireguard.yml
-  when: WIREGUARD_ENABLED
+  when: WIREGUARD_ENABLED | default(false) | bool
   tags: wireguard
 
 - name: Configure OpenVPN (client)
   import_tasks: openvpn.yml
-  when: OPENVPN_ENABLED
+  when: OPENVPN_ENABLED | default(false) | bool
   tags: openvpn
 
 - name: Mount Storages
   import_tasks: storage.yml
-  when: STORAGE_ENABLED
+  when: STORAGE_ENABLED | default(false) | bool
   tags: storage
 
 - name: Configure SFTP
   import_tasks: sftp.yml
-  when: SFTP_ENABLED
+  when: SFTP_ENABLED | default(false) | bool
   tags: sftp
 
 - name: Configure Samba
   import_tasks: samba.yml
-  when: SAMBA_ENABLED
+  when: SAMBA_ENABLED | default(false) | bool
   tags: samba
