@@ -9,7 +9,9 @@
   block:
     - name: Install WireGuard tools on Debian-based system
       apt:
-        name: wireguard-tools
+        name:
+          - iptables
+          - wireguard-tools
         state: latest
         update_cache: true
         install_recommends: false
