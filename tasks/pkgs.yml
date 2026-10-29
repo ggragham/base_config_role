@@ -40,6 +40,15 @@
 
 - name: Manage RHEL-based PKGs
   block:
+    - name: DNF disable weak dependencies globally
+      blockinfile:
+        path: /etc/dnf/dnf.conf
+        insertafter: ^\[main\]
+        block: |
+          install_weak_deps=False
+        marker: '# {mark} ANSIBLE PKG MANAGEMENT'
+      become: true
+
     - name: Install python3-libdnf5
       shell: rpm -q python3-libdnf5 || dnf install -y python3-libdnf5
       changed_when: false
